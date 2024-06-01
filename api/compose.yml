@@ -1,0 +1,18 @@
+
+services:
+  # APIに関する設定
+  api:
+    container_name: go-echo-api
+    build:
+      context: .
+      dockerfile: ./docker/local/Dockerfile
+    env_file:
+      - ./.env
+    # command: go run main.go
+    command: air -c .air.toml
+    volumes:
+      - ./src:/go/src
+    tty: true
+    stdin_open: true
+    ports:
+      - "80:8080"
