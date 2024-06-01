@@ -7,9 +7,7 @@ RUN apk update && \
     apk upgrade && \
     # パッケージのインストール（--no-cacheでキャッシュ削除）
     apk add --no-cache \
-            git \
-            gcc \
-            musl-dev
+            git
 
 COPY ./src .
 
