@@ -12,12 +12,11 @@ RUN apk update && \
 COPY ./src .
 
 # モジュールの依存関係をダウンロード
-RUN go mod download
+RUN if [ -f ./go.mod ]; then \
+      go mod download; \
+    fi
 
 # air をインストール
 RUN go install github.com/cosmtrek/air@latest
 
 EXPOSE 8080
-
-# air でホットリロードしながら起動
-CMD ["air", "-c", ".air.toml"]
