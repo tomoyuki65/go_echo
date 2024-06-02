@@ -1,14 +1,19 @@
 package main
 
 import (
-	"net/http"
 	"github.com/labstack/echo/v4"
+	"api/router"
+	"api/pkg/validator"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+
+	// バリデーション設定
+	e.Validator = validator.NewCustomValidator()
+
+	// ルーティング設定
+	router.SetupRouter(e)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
