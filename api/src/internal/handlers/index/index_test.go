@@ -5,7 +5,7 @@ import (
     "api/internal/services"
     "net/http/httptest"
     "github.com/labstack/echo/v4"
-	"api/pkg/validator"
+    "api/pkg/validator"
     "github.com/stretchr/testify/assert"
     "net/http"
     "strings"
