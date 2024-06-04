@@ -1,4 +1,4 @@
-package handlers
+package index
 
 import (
 	"net/http"
@@ -12,19 +12,19 @@ type RequestBody struct {
 }
 
 // ハンドラーの構造体
-type helloHandler struct {
+type indexHandler struct {
 	helloService services.HelloService
 }
 
-// helloHandlerのポインタを返す関数
-func NewHelloHandler(e *echo.Echo) *helloHandler {
-	return &helloHandler{
+// indexHandlerのポインタを返す関数
+func NewIndexHandler(e *echo.Echo) *indexHandler {
+	return &indexHandler{
 		helloService: services.NewHelloService(),
 	}
 }
 
 // ハンドラーを実装
-func (h *helloHandler) GetIndex(c echo.Context) error {
+func (h *indexHandler) GetIndex(c echo.Context) error {
 	getHello, err := h.helloService.GetHello(c.Request().Context())
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to get hello")
@@ -37,7 +37,7 @@ func (h *helloHandler) GetIndex(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (h *helloHandler) PostIndex(c echo.Context) error {
+func (h *indexHandler) PostIndex(c echo.Context) error {
 	var r RequestBody
 	if err := c.Bind(&r); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
