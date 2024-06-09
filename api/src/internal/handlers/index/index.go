@@ -23,6 +23,11 @@ func NewIndexHandler(e *echo.Echo) *indexHandler {
     }
 }
 
+// PostIndexのレスポンスの構造体
+type PostIndexResponse struct {
+    Message string `json:"message"`
+}
+
 // ハンドラーを実装
 func (h *indexHandler) GetIndex(c echo.Context) error {
     getHello, err := h.helloService.GetHello(c.Request().Context())
@@ -53,9 +58,9 @@ func (h *indexHandler) PostIndex(c echo.Context) error {
         return echo.NewHTTPError(http.StatusInternalServerError, "Failed to post hello")
     }
     
-    res := map[string]interface{}{
-               "message": postHello,
-           }
+    res := PostIndexResponse{
+        Message: postHello,
+    }
 
     return c.JSON(http.StatusOK, res)
 }
