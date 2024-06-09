@@ -1,4 +1,5 @@
 .env
+/src/tmp
+node_modules
 /tmp/db/*
 !/tmp/db/.keep
-/src/tmp

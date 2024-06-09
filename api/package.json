@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "openapi-to-md": "openapi-to-md"
+  },
+  "dependencies": {
+    "openapi-to-md": "^1.0.24"
+  }
+}
