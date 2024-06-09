@@ -8,7 +8,7 @@ import (
 
 // リクエストボディの構造体
 type RequestBody struct {
-    Text string `json:"text" form:"text" validate:"required"`
+    Text string `json:"text" form:"text" validate:"required" example:"こんにちは！"`
 }
 
 // ハンドラーの構造体
@@ -25,7 +25,7 @@ func NewIndexHandler(e *echo.Echo) *indexHandler {
 
 // PostIndexのレスポンスの構造体
 type PostIndexResponse struct {
-    Message string `json:"message"`
+    Message string `json:"message" example:"こんにちは！"`
 }
 
 // ハンドラーを実装
@@ -42,6 +42,13 @@ func (h *indexHandler) GetIndex(c echo.Context) error {
     return c.JSON(http.StatusOK, res)
 }
 
+// @Description パラメータのtextを出力する
+// @Tags index
+// @Param text body RequestBody true "入力テキスト"
+// @Success 200 {object} PostIndexResponse "出力メッセージ"
+// @Failure 400
+// @Failure 500
+// @Router /hello [post]
 func (h *indexHandler) PostIndex(c echo.Context) error {
     var r RequestBody
     if err := c.Bind(&r); err != nil {

@@ -19,4 +19,7 @@ RUN if [ -f ./go.mod ]; then \
 # air をインストール
 RUN go install github.com/air-verse/air@latest
 
+# API仕様書作成用のswagをインストール
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
 EXPOSE 8080
