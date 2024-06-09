@@ -17,6 +17,6 @@ RUN if [ -f ./go.mod ]; then \
     fi
 
 # air をインストール
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 EXPOSE 8080
