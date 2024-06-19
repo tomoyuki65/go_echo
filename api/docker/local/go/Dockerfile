@@ -7,7 +7,8 @@ RUN apk update && \
     apk upgrade && \
     # パッケージのインストール（--no-cacheでキャッシュ削除）
     apk add --no-cache \
-            git
+            git \
+            curl
 
 COPY ./src .
 
@@ -21,5 +22,8 @@ RUN go install github.com/air-verse/air@latest
 
 # API仕様書作成用のswagをインストール
 RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+# マイグレーション用のatlasをインストール
+RUN curl -sSf https://atlasgo.sh | sh
 
 EXPOSE 8080

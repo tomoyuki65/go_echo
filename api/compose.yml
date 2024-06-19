@@ -3,7 +3,7 @@ services:
     container_name: go-echo-api
     build:
       context: .
-      dockerfile: ./docker/local/Dockerfile
+      dockerfile: ./docker/local/go/Dockerfile
     env_file:
       - ./.env
     command: air -c .air.toml
@@ -12,4 +12,19 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "80:8080"
+      - 80:8080
+    depends_on:
+      - db
+  db:
+    container_name: go-echo-db
+    image: mysql:8.0.37
+    env_file:
+      - ./.env 
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/local/db/init:/docker-entrypoint-initdb.d/
+      - mysql-echo-db:/var/lib/mysql
+volumes:
+  mysql-echo-db:
+    driver: local
