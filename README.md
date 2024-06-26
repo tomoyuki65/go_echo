@@ -12,8 +12,8 @@ Go言語（Golang）のフレームワーク「Echo」による
 ## 使用技術  
 Go "1.22.3"  
 Echo "v4.12.0"  
-entgo.io/ent "v0.13.1" 
-atlas "v0.24.1-764acbb-canary"
+entgo.io/ent "v0.13.1"  
+atlas "v0.24.1-764acbb-canary"  
 Docker  
 docker-compose  
   
