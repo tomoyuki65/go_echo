@@ -3,7 +3,7 @@ package index
 import (
     "net/http"
     "github.com/labstack/echo/v4"
-    "api/internal/services"
+    "api/internal/services/hello"
 )
 
 // リクエストボディの構造体
@@ -13,13 +13,13 @@ type RequestBody struct {
 
 // ハンドラーの構造体
 type indexHandler struct {
-    helloService services.HelloService
+    helloService hello.HelloService
 }
 
 // indexHandlerのポインタを返す関数
 func NewIndexHandler(e *echo.Echo) *indexHandler {
     return &indexHandler{
-        helloService: services.NewHelloService(),
+        helloService: hello.NewHelloService(),
     }
 }
 

@@ -24,6 +24,7 @@ services:
       - 3306:3306
     volumes:
       - ./docker/local/db/init:/docker-entrypoint-initdb.d/
+      - ./docker/local/db/conf:/etc/mysql/conf.d/
       - mysql-echo-db:/var/lib/mysql
 volumes:
   mysql-echo-db:

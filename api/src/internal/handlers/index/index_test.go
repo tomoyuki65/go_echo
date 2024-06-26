@@ -2,14 +2,16 @@ package index
 
 import (
     "testing"
-    "api/internal/services"
-    "net/http/httptest"
-    "github.com/labstack/echo/v4"
-    "api/pkg/validator"
-    "github.com/stretchr/testify/assert"
     "net/http"
+    "net/http/httptest"
     "strings"
     "bytes"
+
+    "api/internal/services/hello"
+    "api/pkg/validator"
+    
+    "github.com/labstack/echo/v4"
+    "github.com/stretchr/testify/assert"
 )
 
 // テスト用のEcho設定
@@ -24,7 +26,7 @@ func echoSetup() *echo.Echo {
 func TestGetIndex(t *testing.T) {
     // ハンドラーのインスタンス作成
     handler := &indexHandler{
-        helloService: services.NewHelloService(),
+        helloService: hello.NewHelloService(),
     }
 
     e := echoSetup()
@@ -49,7 +51,7 @@ func TestGetIndex(t *testing.T) {
 func TestPostIndex(t *testing.T) {
     // ハンドラーのインスタンス作成
     handler := &indexHandler{
-        helloService: services.NewHelloService(),
+        helloService: hello.NewHelloService(),
     }
 
     e := echoSetup()
@@ -76,7 +78,7 @@ func TestPostIndex(t *testing.T) {
 func TestPostIndexNotParamText(t *testing.T) {
     // ハンドラーのインスタンス作成
     handler := &indexHandler{
-        helloService: services.NewHelloService(),
+        helloService: hello.NewHelloService(),
     }
 
     e := echoSetup()
