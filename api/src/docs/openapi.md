@@ -14,15 +14,16 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 | --- | --- | --- |
 | POST | [/hello](#posthello) |  |
 | POST | [/user](#postuser) |  |
-| GET | [/user/:uid](#getuseruid) |  |
-| PUT | [/user/:uid](#putuseruid) |  |
-| DELETE | [/user/:uid](#deleteuseruid) |  |
+| GET | [/user/{uid}](#getuseruid) |  |
+| PUT | [/user/{uid}](#putuseruid) |  |
+| DELETE | [/user/{uid}](#deleteuseruid) |  |
 | GET | [/users](#getusers) |  |
 
 ## Reference Table
 
 | Name | Path | Description |
 | --- | --- | --- |
+| Bearer | [#/components/securitySchemes/Bearer](#componentssecurityschemesbearer) | Type "Bearer" followed by a space and JWT token. |
 | api_internal_handlers_user.UserResponse | [#/components/schemas/api_internal_handlers_user.UserResponse](#componentsschemasapi_internal_handlers_useruserresponse) |  |
 | index.PostIndexResponse | [#/components/schemas/index.PostIndexResponse](#componentsschemasindexpostindexresponse) |  |
 | index.RequestBody | [#/components/schemas/index.RequestBody](#componentsschemasindexrequestbody) |  |
@@ -109,10 +110,13 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 
 ***
 
-### [GET]/user/:uid
+### [GET]/user/{uid}
 
 - Description  
 有効な対象ユーザー取得
+
+- Security  
+Bearer  
 
 #### Responses
 
@@ -132,6 +136,8 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 }
 ```
 
+- 401 Unauthorized
+
 - 404 Not Found
 
 - 405 Method Not Allowed
@@ -140,7 +146,7 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 
 ***
 
-### [PUT]/user/:uid
+### [PUT]/user/{uid}
 
 - Description  
 対象ユーザー更新
@@ -154,6 +160,7 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
   email?: string
   first_name?: string
   last_name?: string
+  password?: string
 }
 ```
 
@@ -175,6 +182,8 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 }
 ```
 
+- 401 Unauthorized
+
 - 404 Not Found
 
 - 405 Method Not Allowed
@@ -183,7 +192,7 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 
 ***
 
-### [DELETE]/user/:uid
+### [DELETE]/user/{uid}
 
 - Description  
 対象ユーザー削除
@@ -199,6 +208,8 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
   message?: string
 }
 ```
+
+- 401 Unauthorized
 
 - 404 Not Found
 
@@ -234,6 +245,17 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
 - 500 Internal Server Error
 
 ## References
+
+### #/components/securitySchemes/Bearer
+
+```ts
+{
+  "description": "Type \"Bearer\" followed by a space and JWT token.",
+  "type": "apiKey",
+  "name": "Authorization",
+  "in": "header"
+}
+```
 
 ### #/components/schemas/api_internal_handlers_user.UserResponse
 
@@ -291,5 +313,6 @@ Go言語（Golang）のフレームワーク「Echo」によるバックエン�
   email?: string
   first_name?: string
   last_name?: string
+  password?: string
 }
 ```

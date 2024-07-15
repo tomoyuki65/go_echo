@@ -13,6 +13,10 @@ import (
 // @description Go言語（Golang）のフレームワーク「Echo」によるバックエンドAPIのサンプル
 // @host localhost
 // @BasePath /api/v1
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
     e := echo.New()
 

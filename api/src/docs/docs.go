@@ -81,8 +81,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/:uid": {
+        "/user/{uid}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "有効な対象ユーザー取得",
                 "tags": [
                     "user"
@@ -102,6 +107,9 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/api_internal_handlers_user.UserResponse"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Not Found"
@@ -137,6 +145,9 @@ const docTemplate = `{
                             "$ref": "#/definitions/api_internal_handlers_user.UserResponse"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
                         "description": "Not Found"
                     },
@@ -168,6 +179,9 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.MessageResponse"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Not Found"
@@ -308,8 +322,21 @@ const docTemplate = `{
                 "last_name": {
                     "type": "string",
                     "example": "田中"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "example": "x3D0k3Y89jIc"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -22,6 +22,7 @@ type UpdateUserRequestBody struct {
     LastName string `json:"last_name" form:"last_name" example:"田中"`
     FirstName string `json:"first_name" form:"first_name" example:"太郎"`
     Email string `json:"email" form:"email" validate:"omitempty,email" example:"taro@example.com"`
+    Password string `json:"password" form:"password" validate:"omitempty,min=6" example:"x3D0k3Y89jIc"`
 }
 
 type userHandler struct {
@@ -92,15 +93,22 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 
 // @Description 有効な対象ユーザー取得
 // @Tags user
+// @Security Bearer
 // @Param uid path string true "uid"
 // @Success 200 {object} UserResponse ユーザー情報
+// @Failure 401
 // @Failure 404
 // @Failure 405
 // @Failure 500
-// @Router /user/:uid [get]
+// @Router /user/{uid} [get]
 func (h *userHandler) GetUser(c echo.Context) error {
     // パスパラメータ取得
     uid := c.Param("uid")
+    
+    // 認可チェック
+    if uid != c.Get("uid") {
+        return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+    }
 
     // DB設定
     dbCtx := context.Background()
@@ -156,7 +164,7 @@ func (h *userHandler) GetUsers(c echo.Context) error {
 // @Failure 404
 // @Failure 405
 // @Failure 500
-// @Router /user/:uid [put]
+// @Router /user/{uid} [put]
 func (h *userHandler) UpdateUser(c echo.Context) error {
     // パスパラメータ取得
     uid := c.Param("uid")
@@ -187,6 +195,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
                      r.LastName,
                      r.FirstName,
                      r.Email,
+                     r.Password,
                  )
     if err2 != nil {
         return echo.NewHTTPError(http.StatusInternalServerError, err2.Error())
@@ -202,7 +211,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 // @Failure 404
 // @Failure 405
 // @Failure 500
-// @Router /user/:uid [delete]
+// @Router /user/{uid} [delete]
 func (h *userHandler) DeleteUser(c echo.Context) error {
     // パスパラメータ取得
     uid := c.Param("uid")

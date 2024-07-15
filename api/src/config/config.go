@@ -10,6 +10,7 @@ import (
 type Config struct {
     Env string
     Db  Database `yml:db`
+    Fb  Firebase
 }
 
 type Database struct {
@@ -24,6 +25,20 @@ type Database struct {
     Loc       string
 }
 
+type Firebase struct {
+    Type                    string
+    ProjectId               string
+    PrivateKeyId            string
+    PrivateKey              string
+    ClientEmail             string
+    ClientId                string
+    AuthUri                 string
+    TokenUri                string
+    AuthProviderX509CertUrl string
+    ClientX509CertUrl       string
+    UniverseDomain          string
+}
+
 func SetupConfig(env string) (*Config, error) {
 
     var config *Config
@@ -35,6 +50,19 @@ func SetupConfig(env string) (*Config, error) {
     user := os.Getenv("MYSQL_USER")
     password := os.Getenv("MYSQL_PASSWORD")
     tz := os.Getenv("TZ")
+
+    // Firebase
+    fbType :=  os.Getenv("FIREBASE_TYPE")
+    fbProjectId := os.Getenv("FIREBASE_PROJECT_ID")
+    fbPrivateKeyId := os.Getenv("FIREBASE_PRIVATE_KEY_ID")
+    fbPrivateKey := os.Getenv("FIREBASE_PRIVATE_KEY")
+    fbClientEmail := os.Getenv("FIREBASE_CLIENT_EMAIL")
+    fbClientId := os.Getenv("FIREBASE_CLIENT_ID")
+    fbAuthUri := os.Getenv("FIREBASE_AUTH_URI")
+    fbTokenUri := os.Getenv("FIREBASE_TOKEN_URI")
+    fbAuthProviderX509CertUrl := os.Getenv("FIREBASE_AUTH_PROVIDER_X509_CERT_URL")
+    fbClientX509CertUrl := os.Getenv("FIREBASE_CLIENT_X509_CERT_URL")
+    fbUniverseDomain := os.Getenv("FIREBASE_UNIVERSE_DOMAIN")
 
     // viperの初期設定
     viper.SetConfigName("config." + env)
@@ -64,6 +92,19 @@ func SetupConfig(env string) (*Config, error) {
     config.Db.UserName = user
     config.Db.Password = password
     config.Db.Loc = tz
+
+    // Firebase
+    config.Fb.Type = fbType
+    config.Fb.ProjectId = fbProjectId
+    config.Fb.PrivateKeyId = fbPrivateKeyId
+    config.Fb.PrivateKey = fbPrivateKey
+    config.Fb.ClientEmail = fbClientEmail
+    config.Fb.ClientId = fbClientId
+    config.Fb.AuthUri = fbAuthUri
+    config.Fb.TokenUri = fbTokenUri
+    config.Fb.AuthProviderX509CertUrl = fbAuthProviderX509CertUrl
+    config.Fb.ClientX509CertUrl = fbClientX509CertUrl
+    config.Fb.UniverseDomain = fbUniverseDomain
 
     return config, nil
 }

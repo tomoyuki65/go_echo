@@ -4,6 +4,8 @@ import (
     "github.com/labstack/echo/v4"
     "api/internal/handlers/index"
     "api/internal/handlers/user"
+
+    "api/internal/middleware/auth"
 )
 
 func SetupRouter(e *echo.Echo) {
@@ -15,7 +17,7 @@ func SetupRouter(e *echo.Echo) {
 
     userHandler := user.NewUserHandler(e)
     v1.POST("/user", userHandler.CreateUser)
-    v1.GET("/user/:uid", userHandler.GetUser)
+    v1.GET("/user/:uid", userHandler.GetUser, auth.FirebaseAuth)
     v1.GET("/users", userHandler.GetUsers)
     v1.PUT("/user/:uid", userHandler.UpdateUser)
     v1.DELETE("/user/:uid", userHandler.DeleteUser)

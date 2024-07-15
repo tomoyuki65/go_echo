@@ -86,7 +86,7 @@ func GetUsers(
 
 func UpdateUser(
     dbCtx context.Context,
-    dbClient *ent.Client,
+    dbClient *ent.Tx,
     user *ent.User,
     lastName string,
     firstName string,
@@ -118,7 +118,7 @@ func UpdateUser(
 
 func DeleteUser(
     dbCtx context.Context,
-    dbClient *ent.Client,
+    dbClient *ent.Tx,
     user *ent.User,
 ) error {
     // 現在の日時を文字列で取得

@@ -74,6 +74,10 @@ definitions:
       last_name:
         example: 田中
         type: string
+      password:
+        example: x3D0k3Y89jIc
+        minLength: 6
+        type: string
     type: object
 host: localhost
 info:
@@ -124,7 +128,7 @@ paths:
           description: Internal Server Error
       tags:
       - user
-  /user/:uid:
+  /user/{uid}:
     delete:
       description: 対象ユーザー削除
       parameters:
@@ -138,6 +142,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/user.MessageResponse'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
         "405":
@@ -159,12 +165,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api_internal_handlers_user.UserResponse'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
         "405":
           description: Method Not Allowed
         "500":
           description: Internal Server Error
+      security:
+      - Bearer: []
       tags:
       - user
     put:
@@ -181,6 +191,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api_internal_handlers_user.UserResponse'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
         "405":
@@ -203,4 +215,10 @@ paths:
           description: Internal Server Error
       tags:
       - user
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -6,6 +6,7 @@ import (
 
     "api/ent"
     "api/internal/repositories/user"
+    "api/internal/repositories/auth"
 )
 
 type UserService interface {
@@ -37,6 +38,7 @@ type UserService interface {
         lastName string,
         firstName string,
         email string,
+        password string,
     ) (UserResponse, error)
     DeleteUser(
         echoCtx context.Context,
@@ -133,6 +135,7 @@ func (s *userService) UpdateUser(
     lastName string,
     firstName string,
     email string,
+    password string,
 ) (UserResponse, error) {
 
     getUser, err := user.GetUserFromUid(
@@ -148,17 +151,40 @@ func (s *userService) UpdateUser(
         return nil, fmt.Errorf("no user")
     }
 
-    updateUser, err2 := user.UpdateUser(
+    // トランザクション設定
+    txDbClient, err := dbClient.Tx(dbCtx)
+    if err != nil {
+        return nil, err
+    }
+
+    updateUser, err := user.UpdateUser(
                            dbCtx,
-                           dbClient,
+                           txDbClient,
                            getUser,
                            lastName,
                            firstName,
                            email,
                        )
-    if err2 != nil {
-        return nil, err2
+    if err != nil {
+        // DBロールバック
+        txDbClient.Rollback()
+
+        return nil, err
     }
+
+    if email != "" || password != "" {
+        // Firebaseユーザー更新
+        _, err := auth.UpdateUser(uid, email, password)
+        if err != nil {
+            // DBロールバック
+            txDbClient.Rollback()
+
+            return nil, err
+        }
+    }
+
+    // DBコミット
+    txDbClient.Commit()
 
     return updateUser, nil
 }
@@ -183,14 +209,35 @@ func (s *userService) DeleteUser(
         return fmt.Errorf("no user")
     }
 
-    err2 := user.DeleteUser(
-                     dbCtx,
-                     dbClient,
-                     getUser,
-                 )
-    if err2 != nil {
-        return err2
+    // トランザクション設定
+    txDbClient, err := dbClient.Tx(dbCtx)
+    if err != nil {
+        return err
     }
+
+    err = user.DeleteUser(
+              dbCtx,
+              txDbClient,
+              getUser,
+          )
+    if err != nil {
+        // DBロールバック
+        txDbClient.Rollback()
+
+        return err
+    }
+
+    // Firebaseユーザー削除
+    err = auth.DeleteUser(uid)
+    if err != nil {
+        // DBロールバック
+        txDbClient.Rollback()
+
+        return err
+    }
+
+    // DBコミット
+    txDbClient.Commit()
 
     return nil
 }
