@@ -6,6 +6,7 @@ import (
     "entgo.io/ent"
     "entgo.io/ent/schema/field"
     "entgo.io/ent/schema/index"
+    "entgo.io/ent/schema/edge"
 )
 
 type User struct {
@@ -14,6 +15,7 @@ type User struct {
 
 func (User) Fields() []ent.Field {
     return []ent.Field{
+        field.Int64("id"),
         field.String("uid").
             NotEmpty().
             Unique(),
@@ -52,5 +54,7 @@ func (User) Indexes() []ent.Index {
 }
 
 func (User) Edges() []ent.Edge {
-    return nil
+    return []ent.Edge{
+        edge.To("posts", Post.Type),
+    }
 }

@@ -48,6 +48,105 @@ const docTemplate = `{
                 }
             }
         },
+        "/post": {
+            "post": {
+                "description": "Post作成",
+                "tags": [
+                    "post"
+                ],
+                "parameters": [
+                    {
+                        "description": "作成するPost情報",
+                        "name": "CreateUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/post.CreatePostRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/api_internal_handlers_post.PostResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/post/{id}": {
+            "get": {
+                "description": "有効な対象Post取得",
+                "tags": [
+                    "post"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/post.PostResponseWithUser"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "対象Post削除",
+                "tags": [
+                    "post"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/post.MessageResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "405": {
+                        "description": "Method Not Allowed"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/user": {
             "post": {
                 "description": "ユーザー作成",
@@ -105,7 +204,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api_internal_handlers_user.UserResponse"
+                            "$ref": "#/definitions/user.UserResponseWithPosts"
                         }
                     },
                     "401": {
@@ -145,9 +244,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/api_internal_handlers_user.UserResponse"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
                     "404": {
                         "description": "Not Found"
                     },
@@ -179,9 +275,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.MessageResponse"
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Not Found"
@@ -219,12 +312,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api_internal_handlers_post.PostResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "text": {
+                    "type": "string",
+                    "example": "こんにちは。"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "api_internal_handlers_user.UserResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string",
                     "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object"
                 },
                 "email": {
                     "type": "string",
@@ -273,6 +397,100 @@ const docTemplate = `{
                 }
             }
         },
+        "post.CreatePostRequestBody": {
+            "type": "object",
+            "required": [
+                "text",
+                "user_id"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "example": "こんんちは。"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "post.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "post.PostResponseWithUser": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object",
+                    "properties": {
+                        "users": {
+                            "$ref": "#/definitions/post.User"
+                        }
+                    }
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "text": {
+                    "type": "string",
+                    "example": "こんにちは。"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "post.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "taro@example.com"
+                },
+                "first_name": {
+                    "type": "string",
+                    "example": "太郎"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "last_name": {
+                    "type": "string",
+                    "example": "田中"
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "Xa12kK9ohsIhldD4"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                }
+            }
+        },
         "user.CreateUserRequestBody": {
             "type": "object",
             "required": [
@@ -308,6 +526,34 @@ const docTemplate = `{
                 }
             }
         },
+        "user.Post": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "text": {
+                    "type": "string",
+                    "example": "こんにちは。"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "user.UpdateUserRequestBody": {
             "type": "object",
             "properties": {
@@ -327,6 +573,50 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 6,
                     "example": "x3D0k3Y89jIc"
+                }
+            }
+        },
+        "user.UserResponseWithPosts": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
+                },
+                "edges": {
+                    "type": "object",
+                    "properties": {
+                        "posts": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.Post"
+                            }
+                        }
+                    }
+                },
+                "email": {
+                    "type": "string",
+                    "example": "taro@example.com"
+                },
+                "first_name": {
+                    "type": "string",
+                    "example": "太郎"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "last_name": {
+                    "type": "string",
+                    "example": "田中"
+                },
+                "uid": {
+                    "type": "string",
+                    "example": "Xa12kK9ohsIhldD4"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-06-23T23:18:49+09:00"
                 }
             }
         }

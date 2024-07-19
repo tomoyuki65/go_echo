@@ -7,6 +7,7 @@ import (
 
     "api/ent"
     entUser "api/ent/user"
+    entPost "api/ent/post"
 )
 
 func CreateUser(
@@ -60,6 +61,9 @@ func GetUserFromUid(
                           Query().
                           Where(entUser.UIDEQ(uid)).
                           Where(entUser.DeletedAtIsNil()).
+                          WithPosts(func(query *ent.PostQuery) {
+                              query.Where(entPost.DeletedAtIsNil())
+                          }).
                           First(dbCtx)
     if err != nil && !ent.IsNotFound(err) {
         return nil, fmt.Errorf("failed get user: %v", err)

@@ -1,10 +1,32 @@
 basePath: /api/v1
 definitions:
+  api_internal_handlers_post.PostResponse:
+    properties:
+      created_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      edges:
+        type: object
+      id:
+        example: 1
+        type: integer
+      text:
+        example: こんにちは。
+        type: string
+      updated_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      user_id:
+        example: 1
+        type: integer
+    type: object
   api_internal_handlers_user.UserResponse:
     properties:
       created_at:
         example: "2024-06-23T23:18:49+09:00"
         type: string
+      edges:
+        type: object
       email:
         example: taro@example.com
         type: string
@@ -38,6 +60,72 @@ definitions:
     required:
     - text
     type: object
+  post.CreatePostRequestBody:
+    properties:
+      text:
+        example: こんんちは。
+        type: string
+      user_id:
+        example: 1
+        type: integer
+    required:
+    - text
+    - user_id
+    type: object
+  post.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  post.PostResponseWithUser:
+    properties:
+      created_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      edges:
+        properties:
+          users:
+            $ref: '#/definitions/post.User'
+        type: object
+      id:
+        example: 1
+        type: integer
+      text:
+        example: こんにちは。
+        type: string
+      updated_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      user_id:
+        example: 1
+        type: integer
+    type: object
+  post.User:
+    properties:
+      created_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      edges:
+        type: object
+      email:
+        example: taro@example.com
+        type: string
+      first_name:
+        example: 太郎
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_name:
+        example: 田中
+        type: string
+      uid:
+        example: Xa12kK9ohsIhldD4
+        type: string
+      updated_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+    type: object
   user.CreateUserRequestBody:
     properties:
       email:
@@ -63,6 +151,26 @@ definitions:
       message:
         type: string
     type: object
+  user.Post:
+    properties:
+      created_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      edges:
+        type: object
+      id:
+        example: 1
+        type: integer
+      text:
+        example: こんにちは。
+        type: string
+      updated_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      user_id:
+        example: 1
+        type: integer
+    type: object
   user.UpdateUserRequestBody:
     properties:
       email:
@@ -77,6 +185,37 @@ definitions:
       password:
         example: x3D0k3Y89jIc
         minLength: 6
+        type: string
+    type: object
+  user.UserResponseWithPosts:
+    properties:
+      created_at:
+        example: "2024-06-23T23:18:49+09:00"
+        type: string
+      edges:
+        properties:
+          posts:
+            items:
+              $ref: '#/definitions/user.Post'
+            type: array
+        type: object
+      email:
+        example: taro@example.com
+        type: string
+      first_name:
+        example: 太郎
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_name:
+        example: 田中
+        type: string
+      uid:
+        example: Xa12kK9ohsIhldD4
+        type: string
+      updated_at:
+        example: "2024-06-23T23:18:49+09:00"
         type: string
     type: object
 host: localhost
@@ -107,6 +246,70 @@ paths:
           description: Internal Server Error
       tags:
       - index
+  /post:
+    post:
+      description: Post作成
+      parameters:
+      - description: 作成するPost情報
+        in: body
+        name: CreateUser
+        required: true
+        schema:
+          $ref: '#/definitions/post.CreatePostRequestBody'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api_internal_handlers_post.PostResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      tags:
+      - post
+  /post/{id}:
+    delete:
+      description: 対象Post削除
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.MessageResponse'
+        "404":
+          description: Not Found
+        "405":
+          description: Method Not Allowed
+        "500":
+          description: Internal Server Error
+      tags:
+      - post
+    get:
+      description: 有効な対象Post取得
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.PostResponseWithUser'
+        "404":
+          description: Not Found
+        "405":
+          description: Method Not Allowed
+        "500":
+          description: Internal Server Error
+      tags:
+      - post
   /user:
     post:
       description: ユーザー作成
@@ -142,8 +345,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/user.MessageResponse'
-        "401":
-          description: Unauthorized
         "404":
           description: Not Found
         "405":
@@ -164,7 +365,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api_internal_handlers_user.UserResponse'
+            $ref: '#/definitions/user.UserResponseWithPosts'
         "401":
           description: Unauthorized
         "404":
@@ -191,8 +392,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api_internal_handlers_user.UserResponse'
-        "401":
-          description: Unauthorized
         "404":
           description: Not Found
         "405":

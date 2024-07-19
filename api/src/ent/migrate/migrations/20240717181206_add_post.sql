@@ -1,0 +1,2 @@
+-- Create "posts" table
+CREATE TABLE `posts` (`id` bigint NOT NULL AUTO_INCREMENT, `text` varchar(255) NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `deleted_at` datetime NULL, `user_id` bigint NULL, PRIMARY KEY (`id`), INDEX `post_user_id` (`user_id`), INDEX `post_deleted_at` (`deleted_at`), CONSTRAINT `posts_users_posts` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL) CHARSET utf8mb4 COLLATE utf8mb4_bin;

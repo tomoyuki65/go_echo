@@ -8,6 +8,9 @@ Go言語（Golang）のフレームワーク「Echo」による
 ・ユーザー更新（PUT /user/{uid}）  
 ・ユーザー論理削除（DELETE /user/{uid}）  
 ・有効な全てのユーザー取得（GET /users）  
+・Post作成（POST /post）  
+・有効な対象Post取得（GET /post/{id}）  
+・Post論理削除（DELETE /post/{id}）  
   
 ## 使用技術  
 Go "1.22.3"  

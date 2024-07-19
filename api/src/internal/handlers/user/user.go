@@ -47,6 +47,29 @@ type UserResponse struct {
     Email string `json:"email" example:"taro@example.com"`
     CreatedAt time.Time `json:"created_at" example:"2024-06-23T23:18:49+09:00"`
     UpdatedAt time.Time `json:"updated_at" example:"2024-06-23T23:18:49+09:00"`
+    Edges struct {}
+}
+
+type Post struct {
+    ID int64 `json:"id" example:"1"`
+    UserID int64 `json:"user_id" example:"1"`
+    Text string `json:"text" example:"こんにちは。"`
+    CreatedAt time.Time `json:"created_at" example:"2024-06-23T23:18:49+09:00"`
+    UpdatedAt time.Time `json:"updated_at" example:"2024-06-23T23:18:49+09:00"`
+    Edges struct {}
+}
+
+type UserResponseWithPosts struct {
+    ID int64 `json:"id" example:"1"`
+    UID string `json:"uid" example:"Xa12kK9ohsIhldD4"`
+    LastName string `json:"last_name" example:"田中"`
+    FirstName string `json:"first_name" example:"太郎"`
+    Email string `json:"email" example:"taro@example.com"`
+    CreatedAt time.Time `json:"created_at" example:"2024-06-23T23:18:49+09:00"`
+    UpdatedAt time.Time `json:"updated_at" example:"2024-06-23T23:18:49+09:00"`
+    Edges struct {
+        Posts []Post `json:"posts"`
+    } `json:"edges"`
 }
 
 // @Description ユーザー作成
@@ -75,16 +98,16 @@ func (h *userHandler) CreateUser(c echo.Context) error {
     }
 
     // ユーザー作成
-    res, err2 := h.userService.CreateUser(
-                     c.Request().Context(),
-                     dbCtx,
-                     dbClient,
-                     r.Uid,
-                     r.LastName,
-                     r.FirstName,
-                     r.Email,
+    res, err := h.userService.CreateUser(
+                    c.Request().Context(),
+                    dbCtx,
+                    dbClient,
+                    r.Uid,
+                    r.LastName,
+                    r.FirstName,
+                    r.Email,
                  )
-    if err2 != nil {
+    if err != nil {
         return echo.NewHTTPError(http.StatusInternalServerError, "Failed Create User")
     }
 
@@ -95,7 +118,7 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 // @Tags user
 // @Security Bearer
 // @Param uid path string true "uid"
-// @Success 200 {object} UserResponse ユーザー情報
+// @Success 200 {object} UserResponseWithPosts ユーザー情報（Posts含む）
 // @Failure 401
 // @Failure 404
 // @Failure 405
@@ -118,14 +141,14 @@ func (h *userHandler) GetUser(c echo.Context) error {
     }
 
     // 対象ユーザー取得
-    res, err2 := h.userService.GetUser(
-                     c.Request().Context(),
-                     dbCtx,
-                     dbClient,
-                     uid,
+    res, err := h.userService.GetUser(
+                    c.Request().Context(),
+                    dbCtx,
+                    dbClient,
+                    uid,
                  )
-    if err2 != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, err2.Error())
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
 
     return c.JSON(http.StatusOK, res)
@@ -145,13 +168,13 @@ func (h *userHandler) GetUsers(c echo.Context) error {
     }
 
     // 全てのユーザー取得
-    res, err2 := h.userService.GetUsers(
-                     c.Request().Context(),
-                     dbCtx,
-                     dbClient,
+    res, err := h.userService.GetUsers(
+                    c.Request().Context(),
+                    dbCtx,
+                    dbClient,
                  )
-    if err2 != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, err2.Error())
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
 
     return c.JSON(http.StatusOK, res)
@@ -187,18 +210,18 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
     }
 
     // ユーザー更新
-    res, err2 := h.userService.UpdateUser(
-                     c.Request().Context(),
-                     dbCtx,
-                     dbClient,
-                     uid,
-                     r.LastName,
-                     r.FirstName,
-                     r.Email,
-                     r.Password,
+    res, err := h.userService.UpdateUser(
+                    c.Request().Context(),
+                    dbCtx,
+                    dbClient,
+                    uid,
+                    r.LastName,
+                    r.FirstName,
+                    r.Email,
+                    r.Password,
                  )
-    if err2 != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, err2.Error())
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
 
     return c.JSON(http.StatusOK, res)
@@ -224,14 +247,14 @@ func (h *userHandler) DeleteUser(c echo.Context) error {
     }
 
     // ユーザー削除
-    err2 := h.userService.DeleteUser(
-                     c.Request().Context(),
-                     dbCtx,
-                     dbClient,
-                     uid,
-                 )
-    if err2 != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, err2.Error())
+    err = h.userService.DeleteUser(
+              c.Request().Context(),
+              dbCtx,
+              dbClient,
+              uid,
+          )
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
     }
 
     res := MessageResponse{ Message: "OK" }
