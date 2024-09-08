@@ -12,9 +12,9 @@ RUN apk update && \
 
 COPY ./src .
 
-# モジュールの依存関係をダウンロード
+# モジュールの依存関係をインストール
 RUN if [ -f ./go.mod ]; then \
-      go mod download; \
+      go install; \
     fi
 
 # air をインストール
