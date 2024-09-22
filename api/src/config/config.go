@@ -45,8 +45,10 @@ func SetupConfig(env string) (*Config, error) {
 
     if env != "testing" {
         env = os.Getenv("ENV")
-    } 
+    }
 
+    host := os.Getenv("MYSQL_HOST")
+    database := os.Getenv("MYSQL_DATABASE")
     user := os.Getenv("MYSQL_USER")
     password := os.Getenv("MYSQL_PASSWORD")
     tz := os.Getenv("TZ")
@@ -92,6 +94,14 @@ func SetupConfig(env string) (*Config, error) {
     config.Db.UserName = user
     config.Db.Password = password
     config.Db.Loc = tz
+
+    if env != "testing" && host != "" {
+        config.Db.Host = host
+    }
+
+    if env != "testing" && database != "" {
+        config.Db.Database = database
+    }
 
     // Firebase
     config.Fb.Type = fbType

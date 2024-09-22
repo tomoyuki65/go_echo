@@ -19,13 +19,12 @@ func SetupFirebase() (*auth.Client, error) {
         return nil, err
     }
 
-    // Firebase接続設定
     opt := option.WithCredentialsJSON([]byte(fmt.Sprintf(
                `{
                    "type": "%s",
                    "project_id": "%s",
                    "private_key_id": "%s",
-                   "private_key": %q,
+                   "private_key": "%s",
                    "client_email": "%s",
                    "client_id": "%s",
                    "auth_uri": "%s",
