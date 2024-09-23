@@ -1,4 +1,9 @@
-## ビルドステージ
+##############################
+# 本番環境用
+##############################
+####################
+# ビルドステージ
+####################
 FROM golang:1.23-alpine AS builder
 
 WORKDIR /go/src
@@ -19,7 +24,9 @@ RUN go install
 # ビルド
 RUN go build -o main .
 
-## 実行ステージ
+####################
+# 実行ステージ
+####################
 FROM alpine:latest
 
 WORKDIR /go/src
@@ -32,26 +39,27 @@ RUN apk update && \
             tzdata \
             curl
 
-# マイグレーション用のatlasをインストール
-RUN curl -sSf https://atlasgo.sh | sh
-
 # ビルドステージで作成したバイナリをコピー
 COPY --from=builder ./go/src/main .
 
-# マイグレーション用のファイルを全てコピー
-COPY ./src/ent ./ent
-
-# prod用設定ファイルをコピー
+# prod用の設定ファイルをコピー
 COPY ./src/config/config.prod.yml ./config/
 
-# コンテナ起動時に実行するスクリプトファイルをコピー
+## 今回はコンテナデプロイ時にマイグレーションも実行させたいため、
+## マイグレーション用ファイルのコピーとatlasコマンドのインストールも行う。
+## （実務等では踏み台サーバーを用意してDBにアクセスさせるのでその場合は不要）
+COPY ./src/ent ./ent
+RUN curl -sSf https://atlasgo.sh | sh
+
+# コンテナ起動時に実行させるシェルファイルをコピー
+# シェルファイルからatlasコマンドでマイグレーションをできるようにする。
 COPY ./docker/prod/entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 # ポートを設定
 EXPOSE 8080
 
-# スクリプトを実行
+# シェルファイルを実行
 ENTRYPOINT ["ash", "./entrypoint.sh"]
 
 # APIサーバー起動コマンド
